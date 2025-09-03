@@ -1,0 +1,12 @@
+body {
+  background: linear-gradient(
+    to right,
+    rgb(113, 65, 168),
+    rgba(44, 114, 251, 1)
+  ); /* 设置背景渐变 */
+}
+
+/* 添加全局样式 */
+input {
+  box-sizing: border-box; /* 确保一致的尺寸 */
+}

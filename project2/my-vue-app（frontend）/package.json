@@ -1,0 +1,27 @@
+{
+  "name": "my-vue-app",
+  "version": "1.0.0",
+  "description": "A Vue.js application with login, logout, and permission control functionalities.",
+  "main": "src/main.js",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "dev": "vue-cli-service serve"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0",
+    "vuex": "^4.0.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.5.0",
+    "@vue/cli-service": "^4.5.0",
+    "babel-eslint": "^10.1.0"
+  },
+  "author": "",
+  "license": "MIT"
+}
