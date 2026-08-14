@@ -20,6 +20,9 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,16 +31,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'project2/my-vue-app（frontend）/package-lock.json'
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: project2/my-vue-app（frontend）
+      - name: Install and Build
+        run: |
+          cd "project2/my-vue-app（frontend）"
+          npm install
+          npm run build
 
-      - name: Build Vue app
-        run: npm run build
-        working-directory: project2/my-vue-app（frontend）
+      - name: Move dist to root
+        run: |
+          mv "project2/my-vue-app（frontend）/dist" ./dist
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -45,7 +48,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'project2/my-vue-app（frontend）/dist'
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
