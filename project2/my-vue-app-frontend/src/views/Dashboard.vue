@@ -34,6 +34,22 @@
       </div>
     </div>
 
+    <section class="permission-section">
+      <div>
+        <h2>🔐 Active permissions: {{ userRole || 'USER' }}</h2>
+        <p>{{ roleDescription }}</p>
+      </div>
+      <div class="permission-list">
+        <span v-for="permission in permissions" :key="permission" class="permission-chip">{{ permission }}</span>
+      </div>
+      <div class="admin-actions" v-if="canManageJournals || canManageSystem">
+        <button v-if="canManageJournals" class="permission-action" @click="showPermissionNotice('Journal update')">Update journal metadata</button>
+        <button v-if="canManageSystem" class="permission-action" @click="showPermissionNotice('Data import')">Import data</button>
+        <button v-if="canManageSystem" class="permission-action danger" @click="showPermissionNotice('Database truncate')">Truncate database</button>
+      </div>
+      <p v-if="permissionNotice" class="permission-notice">{{ permissionNotice }}</p>
+    </section>
+
     <!-- Search Section -->
     <div class="search-section">
       <div class="search-header">
@@ -150,8 +166,27 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'Dashboard',
+  computed: {
+    ...mapGetters(['userRole', 'permissions']),
+    canManageJournals() {
+      return this.permissions.includes('journal:update');
+    },
+    canManageSystem() {
+      return this.permissions.includes('import') || this.permissions.includes('truncate');
+    },
+    roleDescription() {
+      const descriptions = {
+        USER: 'Read-only access to literature search and analytical queries.',
+        JOURNAL_ADMIN: 'Read access plus controlled updates to journal metadata and article-journal records.',
+        ADMIN: 'Full administrative access, including data import, truncate, user management, and journal updates.'
+      };
+      return descriptions[this.userRole] || descriptions.USER;
+    }
+  },
   data() {
     return {
       query: '',
@@ -159,6 +194,7 @@ export default {
       searched: false,
       results: [],
       queryTime: 0,
+      permissionNotice: '',
       mockArticles: [
         { pmid: 38234567, title: 'Machine Learning Approaches in Healthcare: A Systematic Review', authors: ['Smith J', 'Chen L', 'Wang M'], journal: 'Nature Medicine', year: 2024, doi: '10.1038/s41591-024-02845-3', citations: 128, abstract: 'This study explores machine learning applications in clinical diagnostics and treatment planning. The review covers 200+ papers on deep learning, reinforcement learning, and statistical methods applied to healthcare data.' },
         { pmid: 37123456, title: 'Deep Neural Networks for Medical Image Classification', authors: ['Johnson K', 'Li P'], journal: 'IEEE Trans Med Imaging', year: 2023, doi: '10.1109/TMI.2023.3245678', citations: 256, abstract: 'We present a novel CNN architecture that achieves 96.7% accuracy on radiology image diagnosis. The model combines transformer attention with residual connections for improved healthcare screening.' },
@@ -206,6 +242,9 @@ export default {
     },
     delay(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
+    },
+    showPermissionNotice(operation) {
+      this.permissionNotice = `${operation} is permitted for ${this.userRole}. In the local Spring Boot + PostgreSQL deployment, this operation is executed only after backend and database privilege checks.`;
     }
   }
 };
@@ -320,6 +359,66 @@ export default {
   font-size: 0.8rem;
   color: #92400e;
   margin: 0;
+}
+
+.permission-section {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.permission-section h2 {
+  font-size: 1.05rem;
+  color: #1e293b;
+  margin-bottom: 0.4rem;
+}
+
+.permission-section p {
+  color: #64748b;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.permission-list,
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.permission-chip {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: #e0e7ff;
+  color: #4338ca;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+}
+
+.permission-action {
+  border: 1px solid #667eea;
+  background: white;
+  color: #4f46e5;
+  border-radius: 7px;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.permission-action.danger {
+  border-color: #dc2626;
+  color: #b91c1c;
+}
+
+.permission-notice {
+  margin-top: 0.85rem;
+  padding: 0.7rem;
+  background: #fffbeb;
+  border-radius: 7px;
+  color: #92400e !important;
 }
 
 .search-section {

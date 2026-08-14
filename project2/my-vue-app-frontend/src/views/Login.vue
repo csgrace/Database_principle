@@ -30,18 +30,27 @@
           />
         </div>
 
-        <div class="form-options">
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="isAdmin" />
-            <span>Login as Admin</span>
+        <fieldset class="role-selector">
+          <legend>Demo role</legend>
+          <label class="role-option" :class="{ selected: role === 'USER' }">
+            <input v-model="role" type="radio" value="USER" />
+            <span><strong>User</strong><small>Search and analytics</small></span>
           </label>
-        </div>
+          <label class="role-option" :class="{ selected: role === 'JOURNAL_ADMIN' }">
+            <input v-model="role" type="radio" value="JOURNAL_ADMIN" />
+            <span><strong>Journal Admin</strong><small>Search + journal updates</small></span>
+          </label>
+          <label class="role-option" :class="{ selected: role === 'ADMIN' }">
+            <input v-model="role" type="radio" value="ADMIN" />
+            <span><strong>Admin</strong><small>All database operations</small></span>
+          </label>
+        </fieldset>
 
         <div v-if="errorMessage" class="error-msg">{{ errorMessage }}</div>
 
         <button type="submit" class="login-btn">Sign In</button>
 
-        <p class="demo-hint">🎓 Demo mode — enter any credentials to explore</p>
+        <p class="demo-hint">🎓 GitHub Pages demo: choose a role to preview permissions. On localhost, Spring Boot validates credentials and returns the role stored in PostgreSQL.</p>
       </form>
     </div>
   </div>
@@ -56,7 +65,7 @@ export default {
     return {
       username: '',
       password: '',
-      isAdmin: true,
+      role: 'USER',
       errorMessage: ''
     };
   },
@@ -64,14 +73,29 @@ export default {
     ...mapActions(['loginUser']),
     async login() {
       try {
+        let authenticatedRole = this.role;
+
+        // The hosted Pages site has no server. When running locally, use the
+        // Spring Boot API so PostgreSQL is the source of truth for the role.
+        if (window.location.hostname === 'localhost') {
+          const response = await fetch('http://localhost:8082/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: this.username, password: this.password })
+          });
+          if (!response.ok) throw new Error('Invalid username or password');
+          const payload = await response.json();
+          authenticatedRole = payload.role;
+        }
+
         await this.loginUser({
           username: this.username,
           password: this.password,
-          role: this.isAdmin ? 'admin' : 'user'
+          role: authenticatedRole
         });
         this.$router.push('/dashboard');
       } catch (error) {
-        this.errorMessage = 'Login failed. Please try again.';
+        this.errorMessage = error.message || 'Login failed. Please try again.';
       }
     }
   }
@@ -149,24 +173,47 @@ export default {
   border-color: #667eea;
 }
 
-.form-options {
-  display: flex;
-  align-items: center;
+.role-selector {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.75rem;
 }
 
-.checkbox-label {
+.role-selector legend {
+  padding: 0 0.4rem;
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.role-option {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
+  padding: 0.6rem;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9rem;
-  color: #4b5563;
+  color: #374151;
 }
 
-.checkbox-label input {
-  width: 16px;
-  height: 16px;
+.role-option.selected {
+  background: #eef2ff;
+}
+
+.role-option input {
   accent-color: #667eea;
+}
+
+.role-option span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.85rem;
+}
+
+.role-option small {
+  color: #6b7280;
+  font-size: 0.75rem;
 }
 
 .login-btn {

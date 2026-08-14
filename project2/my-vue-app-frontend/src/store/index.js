@@ -19,16 +19,19 @@ export default createStore({
   },
   actions: {
     loginUser({ commit }, credentials) {
-      const role = credentials.role || 'admin';
-      const permissions = role === 'admin'
-        ? ['read', 'write', 'delete', 'admin', 'import', 'truncate']
-        : ['read'];
+      const role = credentials.role || 'USER';
+      const permissionMap = {
+        USER: ['search', 'analytics'],
+        JOURNAL_ADMIN: ['search', 'analytics', 'journal:update'],
+        ADMIN: ['search', 'analytics', 'journal:update', 'import', 'truncate', 'user:manage']
+      };
 
       const user = {
         name: credentials.username || 'Demo User',
-        role: role,
+        role,
         username: credentials.username || 'demo',
-        permissions: permissions
+        permissions: permissionMap[role] || permissionMap.USER,
+        demoMode: true
       };
       commit('setUser', user);
       commit('setUserRole', role);
@@ -40,6 +43,7 @@ export default createStore({
   getters: {
     isAuthenticated: state => !!state.user,
     user: state => state.user,
-    userRole: state => state.userRole
+    userRole: state => state.userRole,
+    permissions: state => state.user?.permissions || []
   }
 });

@@ -12,7 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +41,27 @@ public class MyController {
     private JournalService journalService;
     @Autowired
     private GrantService grantService;
+    /**
+     * Authenticates against the PostgreSQL users table. The returned role is used by
+     * the frontend to select the permitted feature set; database GRANT rules remain
+     * the authoritative enforcement mechanism for local deployments.
+     */
+    @PostMapping("/auth/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        if (request.username() == null || request.password() == null) {
+            return ResponseEntity.badRequest().body(new AuthResponse(false, null, null));
+        }
+        boolean authenticated = databaseService.login(request.username(), request.password());
+        if (!authenticated) {
+            return ResponseEntity.status(401).body(new AuthResponse(false, null, null));
+        }
+        return ResponseEntity.ok(new AuthResponse(true, request.username(), databaseService.getUserRole(request.username())));
+    }
+
+    public record LoginRequest(String username, String password) {}
+
+    public record AuthResponse(boolean authenticated, String username, String role) {}
+
     @GetMapping("/getGroupMembers")
     public String getGroupMembers() {
         logger.info("Received request for getGroupMembers");
