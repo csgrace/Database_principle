@@ -46,11 +46,11 @@
         <div class="example-group">
           <span class="example-label">🔎 Try these searches:</span>
           <div class="example-tags">
-            <button @click="query='machine learning'; search()" class="example-tag">machine learning</button>
-            <button @click="query='Smith J'; search()" class="example-tag">Smith J (author)</button>
-            <button @click="query='38234567'; search()" class="example-tag">38234567 (PMID)</button>
-            <button @click="query='Nature'; search()" class="example-tag">Nature (Journal)</button>
-            <button @click="query='cancer'; search()" class="example-tag">cancer</button>
+            <button @click="query='reinforcement learning'; search()" class="example-tag">reinforcement learning</button>
+            <button @click="query='Williams S'; search()" class="example-tag">Williams S (author)</button>
+            <button @click="query='39567890'; search()" class="example-tag">39567890 (PMID)</button>
+            <button @click="query='Bioinformatics'; search()" class="example-tag">Bioinformatics (Journal)</button>
+            <button @click="query='transformer'; search()" class="example-tag">transformer</button>
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@
           v-model="query"
           @keyup.enter="search"
           type="text"
-          placeholder="Enter: keywords (machine learning), author name (Smith J), PMID (38234567), or journal (Nature)..."
+          placeholder="Enter: keywords (reinforcement learning), author name (Williams S), PMID (39567890), or journal (Bioinformatics)..."
           class="search-input"
         />
         <button @click="search" :disabled="loading" class="search-btn">
