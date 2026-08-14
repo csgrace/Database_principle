@@ -4,12 +4,6 @@
 >
 > A PubMed literature search system with full-stack Java + Vue.js implementation, featuring complex database design, data import pipeline, and interactive frontend.
 
-### 🚀 Live Demo
-
-**[View Deployed Frontend →](https://csgrace.github.io/Database_principle/)**
-
-Showcase page with project architecture, database design, API documentation, and interactive UI preview.
-
 ---
 
 ## Overview
