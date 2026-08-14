@@ -121,7 +121,6 @@
           <h2 class="section-title">🗄️ PostgreSQL Data Model — 13 Tables</h2>
           <p class="schema-intro">The schema is centered on <code>Article</code>. Relationship tables resolve many-to-many links with authors, keywords, grants, publication types, and journals.</p>
         </div>
-        <a class="er-source-link" href="https://github.com/csgrace/Database_principle/blob/main/project2/E-R%E5%9B%BE%20v1.drawio.png" target="_blank" rel="noopener">Open full E-R diagram ↗</a>
       </div>
 
       <div class="relation-map">
@@ -157,10 +156,7 @@
         <span><b>article_references</b> creates the citation graph between articles.</span>
       </div>
 
-      <details class="er-details">
-        <summary>View the original E-R diagram from the project</summary>
-        <img src="https://raw.githubusercontent.com/csgrace/Database_principle/main/project2/E-R%E5%9B%BE%20v1.drawio.png" alt="Project 2 PostgreSQL E-R diagram" class="er-diagram" />
-      </details>
+      <img src="https://raw.githubusercontent.com/csgrace/Database_principle/main/project2/E-R%E5%9B%BE%20v1.drawio.png" alt="Project 2 PostgreSQL E-R diagram" class="er-diagram" />
     </section>
   </div>
 </template>
@@ -200,7 +196,7 @@ export default {
       // Simulate API call to Spring Boot backend
       await this.delay(800 + Math.random() * 600);
       
-      this.apiStatus = { type: 'success', message: 'Query executed via PostgreSQL tsvector index' };
+      this.apiStatus = null;
       
       // Filter mock results based on query
       const q = this.query.toLowerCase();
@@ -260,8 +256,10 @@ export default {
 
 .backend-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .backend-stat {
@@ -568,17 +566,6 @@ export default {
   max-width: 720px;
 }
 
-.er-source-link {
-  flex-shrink: 0;
-  background: #edf2ff;
-  color: #4f46e5;
-  padding: 0.55rem 0.8rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
 .relation-map {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -651,23 +638,10 @@ export default {
   font-size: 0.8rem;
 }
 
-.er-details {
-  margin-top: 1.25rem;
-  border-top: 1px solid #e2e8f0;
-  padding-top: 1rem;
-}
-
-.er-details summary {
-  cursor: pointer;
-  color: #4f46e5;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
 .er-diagram {
   display: block;
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
 }
@@ -681,6 +655,7 @@ export default {
     flex-direction: column;
     gap: 0.5rem;
   }
+  .backend-stats,
   .relation-map {
     grid-template-columns: 1fr;
   }
