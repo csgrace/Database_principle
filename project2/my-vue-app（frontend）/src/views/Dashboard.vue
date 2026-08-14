@@ -1,250 +1,303 @@
 <template>
   <div class="dashboard">
-    <h1>📚 PubMed Literature Search System</h1>
-    <p class="subtitle">CS307 Database Principles — Full-Stack Course Project</p>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-number">2,500,000+</div>
-        <div class="stat-label">Articles Indexed</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">850,000+</div>
-        <div class="stat-label">Authors</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">12,000+</div>
-        <div class="stat-label">Journals</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">8</div>
-        <div class="stat-label">REST Endpoints</div>
+    <!-- User Info Card -->
+    <div class="user-card">
+      <div class="user-avatar">{{ userInitials }}</div>
+      <div class="user-info">
+        <h2>Welcome, {{ user?.name || 'User' }}!</h2>
+        <div class="user-meta">
+          <span class="role-badge" :class="userRole">{{ userRole }}</span>
+          <span class="permissions-count">{{ permissionCount }} permissions</span>
+        </div>
       </div>
     </div>
 
-    <div class="services-section">
-      <h2>Available Services</h2>
-
-      <div class="service-category">
-        <h3>📄 Article Service</h3>
-        <ul>
-          <li><code>getArticleByPMID</code> — Retrieve article details by PubMed ID</li>
-          <li><code>getArticleCitationsByYear</code> — Citation trends over years</li>
-          <li><code>addArticleAndUpdateIF</code> — Add article and update impact factor</li>
-          <li><code>searchArticles</code> — Full-text search with pagination</li>
-        </ul>
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-val">2.5M+</div>
+        <div class="stat-key">Articles</div>
       </div>
-
-      <div class="service-category">
-        <h3>👤 Author Service</h3>
-        <ul>
-          <li><code>getArticlesByAuthorSortedByCitations</code> — Author's publications ranked</li>
-          <li><code>getJournalWithMostArticlesByAuthor</code> — Author's primary journal</li>
-          <li><code>getMinArticlesToLinkAuthors</code> — Collaboration path analysis</li>
-        </ul>
+      <div class="stat-box">
+        <div class="stat-val">850K+</div>
+        <div class="stat-key">Authors</div>
       </div>
-
-      <div class="service-category">
-        <h3>📊 Journal Service</h3>
-        <ul>
-          <li><code>getImpactFactor</code> — Get journal impact factor</li>
-          <li><code>updateJournalName</code> — Update journal information</li>
-          <li><code>getArticlesByJournal</code> — List journal articles</li>
-        </ul>
+      <div class="stat-box">
+        <div class="stat-val">12K+</div>
+        <div class="stat-key">Journals</div>
       </div>
-
-      <div class="service-category">
-        <h3>🔑 Keyword Service</h3>
-        <ul>
-          <li><code>getArticleCountByKeywordInPastYears</code> — Keyword trend analysis</li>
-        </ul>
-      </div>
-
-      <div class="service-category">
-        <h3>🌍 Grant Service</h3>
-        <ul>
-          <li><code>getCountryFundPapers</code> — Country funding analysis</li>
-        </ul>
-      </div>
-
-      <div class="service-category">
-        <h3>🗄️ Database Service</h3>
-        <ul>
-          <li><code>importData</code> — Bulk data import via GoodLoader</li>
-          <li><code>truncate</code> — Clear database tables</li>
-          <li><code>sum</code> — Database statistics overview</li>
-          <li><code>getGroupMembers</code> — Group member information</li>
-        </ul>
+      <div class="stat-box">
+        <div class="stat-val">6</div>
+        <div class="stat-key">Services</div>
       </div>
     </div>
 
-    <div class="tech-stack">
-      <h2>Tech Stack</h2>
-      <div class="tech-pills">
-        <span class="tech-pill">Java 17</span>
-        <span class="tech-pill">Spring Boot</span>
-        <span class="tech-pill">Vue 3</span>
-        <span class="tech-pill">Vuex</span>
-        <span class="tech-pill">Vue Router</span>
-        <span class="tech-pill">PostgreSQL 16</span>
-        <span class="tech-pill">JDBC</span>
-        <span class="tech-pill">Gradle</span>
-        <span class="tech-pill">PL/pgSQL</span>
-        <span class="tech-pill">Vite</span>
+    <!-- Services -->
+    <div class="section">
+      <h2 class="section-title">Available Services</h2>
+      <PermissionControl v-if="userRole === 'admin'" />
+      <div class="services-grid">
+        <div class="service-card" v-for="service in services" :key="service.name">
+          <div class="service-icon">{{ service.icon }}</div>
+          <h3>{{ service.name }}</h3>
+          <ul>
+            <li v-for="method in service.methods" :key="method">{{ method }}</li>
+          </ul>
+        </div>
       </div>
     </div>
 
-    <div class="demo-note">
-      <p>🎓 This is a demo showcase of the CS307 Database Principles project. The full application requires a running Spring Boot backend with PostgreSQL database.</p>
+    <!-- Tech Stack -->
+    <div class="section">
+      <h2 class="section-title">Tech Stack</h2>
+      <div class="tech-list">
+        <span class="tech-tag">Java 17</span>
+        <span class="tech-tag">Spring Boot</span>
+        <span class="tech-tag">Vue 3</span>
+        <span class="tech-tag">Vuex</span>
+        <span class="tech-tag">PostgreSQL 16</span>
+        <span class="tech-tag">JDBC</span>
+        <span class="tech-tag">PL/pgSQL</span>
+        <span class="tech-tag">Gradle</span>
+        <span class="tech-tag">Vite</span>
+      </div>
+    </div>
+
+    <div class="demo-banner">
+      <strong>🎓 Demo Mode</strong> — This is a frontend showcase. Full functionality requires Spring Boot backend with PostgreSQL.
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+import PermissionControl from '@/components/PermissionControl.vue';
+
 export default {
-  name: 'Dashboard'
+  name: 'Dashboard',
+  components: { PermissionControl },
+  computed: {
+    ...mapGetters(['user', 'userRole']),
+    userInitials() {
+      const name = this.user?.name || 'U';
+      return name.charAt(0).toUpperCase();
+    },
+    permissionCount() {
+      return this.user?.permissions?.length || 0;
+    },
+    services() {
+      return [
+        {
+          name: 'Article Service',
+          icon: '📄',
+          methods: ['getArticleByPMID', 'searchArticles', 'getCitationsByYear', 'addArticleAndUpdateIF']
+        },
+        {
+          name: 'Author Service',
+          icon: '👤',
+          methods: ['getArticlesByAuthor', 'getTopJournal', 'getCollaborationPath']
+        },
+        {
+          name: 'Journal Service',
+          icon: '📊',
+          methods: ['getImpactFactor', 'updateJournal', 'getArticlesByJournal']
+        },
+        {
+          name: 'Keyword Service',
+          icon: '🔑',
+          methods: ['getArticleCountByKeyword', 'getKeywordTrends']
+        },
+        {
+          name: 'Grant Service',
+          icon: '🌍',
+          methods: ['getCountryFundPapers']
+        },
+        {
+          name: 'Database Service',
+          icon: '🗄️',
+          methods: ['importData', 'truncate', 'getStats', 'getGroupMembers']
+        }
+      ];
+    }
+  }
 };
 </script>
 
 <style scoped>
 .dashboard {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 2rem;
 }
 
-h1 {
-  color: #1a73e8;
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.subtitle {
-  color: #5f6368;
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  margin-bottom: 3rem;
-}
-
-.stat-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: white;
   padding: 1.5rem;
   border-radius: 12px;
-  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 1.5rem;
 }
 
-.stat-card:nth-child(2) {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+.user-avatar {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
-.stat-card:nth-child(3) {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+.user-info h2 {
+  font-size: 1.25rem;
+  color: #1a1a2e;
+  margin-bottom: 0.4rem;
 }
 
-.stat-card:nth-child(4) {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+.user-meta {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
 }
 
-.stat-number {
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 0.25rem;
+.role-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
+.role-badge.admin {
+  background: #d1fae5;
+  color: #065f46;
 }
 
-.services-section {
+.role-badge.user {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.permissions-count {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
-.services-section h2 {
-  color: #202124;
-  border-bottom: 2px solid #e8eaed;
+.stat-box {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.stat-val {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #667eea;
+}
+
+.stat-key {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  color: #1a1a2e;
+  margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #f3f4f6;
 }
 
-.service-category {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #1a73e8;
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
 }
 
-.service-category h3 {
-  color: #1a73e8;
-  margin-bottom: 0.75rem;
+.service-card {
+  background: #f9fafb;
+  padding: 1.25rem;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
 }
 
-.service-category ul {
+.service-card h3 {
+  font-size: 1rem;
+  color: #1a1a2e;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.service-card ul {
   list-style: none;
   padding: 0;
 }
 
-.service-category li {
-  padding: 0.4rem 0;
-  color: #5f6368;
-  font-size: 0.95rem;
-}
-
-.service-category code {
-  background: #e8f0fe;
-  color: #1967d2;
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
+.service-card li {
+  font-size: 0.8rem;
+  color: #6b7280;
+  padding: 0.2rem 0;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
-  margin-right: 0.5rem;
 }
 
-.tech-stack {
-  margin-bottom: 2rem;
-}
-
-.tech-stack h2 {
-  color: #202124;
-  border-bottom: 2px solid #e8eaed;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.tech-pills {
+.tech-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.tech-pill {
-  background: #e8f0fe;
-  color: #1967d2;
-  padding: 0.4rem 1rem;
+.tech-tag {
+  background: #eef2ff;
+  color: #4f46e5;
+  padding: 0.35rem 0.85rem;
   border-radius: 50px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 500;
 }
 
-.demo-note {
-  background: #fff3cd;
-  border: 1px solid #ffc107;
+.demo-banner {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
   border-radius: 8px;
   padding: 1rem;
-  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #92400e;
 }
 
-.demo-note p {
-  color: #856404;
-  font-size: 0.9rem;
-  margin: 0;
+@media (max-width: 640px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .user-card {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 </style>

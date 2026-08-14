@@ -1,121 +1,204 @@
 <template>
-  <div class="login-container" v-if="!isLoggedIn">
-    <h1>Login</h1> <!-- 登录标题 -->
-    <form @submit.prevent="login">
-      <div class="input-group">
-        <input v-model="username" placeholder="Username" /> <!-- 用户名输入框 -->
+  <div class="login-page">
+    <div class="login-container">
+      <div class="login-header">
+        <div class="login-logo">📚</div>
+        <h1>SUSTC PubMed System</h1>
+        <p class="login-subtitle">CS307 Database Principles — Full-Stack Course Project</p>
       </div>
-      <div class="input-group">
-        <input v-model="password" type="password" placeholder="Password" /> <!-- 密码输入框 -->
-      </div>
-      <button type="submit">Login</button> <!-- 登录按钮 -->
-      <div class="message-container">
-        <div v-if="errorMessage" class="error">{{ errorMessage }}</div> <!-- 错误信息 -->
-        <div v-if="successMessage" class="success">{{ successMessage }}</div> <!-- 成功信息 -->
-      </div>
-    </form>
-  </div>
-  <div v-else>
-    <button @click="logout">Logout</button> <!-- 注销按钮 -->
+
+      <form @submit.prevent="login" class="login-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            id="username"
+            v-model="username"
+            type="text"
+            placeholder="Enter username (any for demo)"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            v-model="password"
+            type="password"
+            placeholder="Enter password (any for demo)"
+            required
+          />
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" v-model="isAdmin" />
+            <span>Login as Admin</span>
+          </label>
+        </div>
+
+        <div v-if="errorMessage" class="error-msg">{{ errorMessage }}</div>
+
+        <button type="submit" class="login-btn">Sign In</button>
+
+        <p class="demo-hint">🎓 Demo mode — enter any credentials to explore</p>
+      </form>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'; // 导入 Vuex 的 mapActions
+import { mapActions } from 'vuex';
 
 export default {
+  name: 'Login',
   data() {
     return {
-      username: '', // 用户名
-      password: '', // 密码
-      errorMessage: '', // 错误信息
-      successMessage: '', // 成功信息
-      isLoggedIn: false // 登录状态
+      username: '',
+      password: '',
+      isAdmin: true,
+      errorMessage: ''
     };
   },
   methods: {
-    ...mapActions(['loginUser', 'logout']), // 映射 Vuex 的 loginUser 和 logout 动作
+    ...mapActions(['loginUser']),
     async login() {
       try {
-        await this.loginUser({ username: this.username, password: this.password }); // 调用 loginUser 动作
-        this.successMessage = 'Valid user!'; // 设置成功信息
-        this.isLoggedIn = true; // 设置登录状态
+        await this.loginUser({
+          username: this.username,
+          password: this.password,
+          role: this.isAdmin ? 'admin' : 'user'
+        });
+        this.$router.push('/');
       } catch (error) {
-        console.error('Login error:', error); // 添加调试信息
-        this.errorMessage = 'Invalid username or password'; // 设置错误信息
-        this.username = ''; // 清空用户名输入框
-        this.password = ''; // 清空密码输入框
+        this.errorMessage = 'Login failed. Please try again.';
       }
-    },
-    logout() {
-      this.logout(); // 调用 logout 动作
-      this.isLoggedIn = false; // 重置登录状态
-      this.username = ''; // 清空用户名输入框
-      this.password = ''; // 清空密码输入框
-      this.errorMessage = ''; // 清空错误信息
-      this.successMessage = ''; // 清空成功信息
     }
   }
 };
 </script>
 
 <style scoped>
-.login-container {
+.login-page {
+  min-height: calc(100vh - 60px);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-h1 {
-  margin-bottom: 20px;
-}
-
-.input-group {
-  margin-bottom: 15px;
+.login-container {
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
   width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
 }
 
-input {
-  width: 100%;
-  height: 40px; /* 设置输入框固定高度 */
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box; /* 确保一致的尺寸 */
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #42b983;
-  color: rgb(225, 217, 217);
-  border: none;
-  border-radius: 5px;
+.login-logo {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-header h1 {
+  font-size: 1.5rem;
+  color: #1a1a2e;
+  margin-bottom: 0.25rem;
+}
+
+.login-subtitle {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-group input {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-options {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
+  font-size: 0.9rem;
+  color: #4b5563;
 }
 
-button:hover {
-  background-color: #369f6b;
+.checkbox-label input {
+  width: 16px;
+  height: 16px;
+  accent-color: #667eea;
 }
 
-.message-container {
-  height: 20px; /* 设置消息容器固定高度 */
-  margin-top: 10px;
+.login-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.85rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
 }
 
-.error {
-  color: red;
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
-.success {
-  color: green;
+.error-msg {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.demo-hint {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
 }
 </style>

@@ -2,15 +2,8 @@ import { createStore } from 'vuex';
 
 export default createStore({
   state: {
-    user: {
-      name: 'Demo User',
-      role: 'admin',
-      username: 'demo',
-      password: 'demo',
-      permissions: ['read', 'write', 'admin']
-    },
-    userRole: 'admin',
-    isDemoMode: true
+    user: null,
+    userRole: null
   },
   mutations: {
     setUser(state, user) {
@@ -26,15 +19,19 @@ export default createStore({
   },
   actions: {
     loginUser({ commit }, credentials) {
-      // Demo mode: accept any credentials
+      const role = credentials.role || 'admin';
+      const permissions = role === 'admin'
+        ? ['read', 'write', 'delete', 'admin', 'import', 'truncate']
+        : ['read'];
+
       const user = {
         name: credentials.username || 'Demo User',
-        role: 'admin',
+        role: role,
         username: credentials.username || 'demo',
-        permissions: ['read', 'write', 'admin']
+        permissions: permissions
       };
       commit('setUser', user);
-      commit('setUserRole', user.role);
+      commit('setUserRole', role);
     },
     logout({ commit }) {
       commit('logout');
