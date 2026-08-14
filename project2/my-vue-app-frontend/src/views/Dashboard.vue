@@ -81,7 +81,7 @@
       <div class="results-list">
         <div v-for="article in results" :key="article.pmid" class="result-card">
           <div class="result-title">
-            <a href="#">{{ article.title }}</a>
+            <span>{{ article.title }}</span>
           </div>
           <div class="result-meta">
             <span class="result-authors">{{ article.authors.join(', ') }}</span>
@@ -432,15 +432,10 @@ export default {
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.result-title a {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #667eea;
-  text-decoration: none;
-}
-
-.result-title a:hover {
-  text-decoration: underline;
+.result-title span {
+font-size: 1.05rem;
+font-weight: 600;
+color: #1a1a2e;
 }
 
 .result-meta {
