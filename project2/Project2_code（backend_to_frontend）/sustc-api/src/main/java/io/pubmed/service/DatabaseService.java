@@ -42,6 +42,4 @@ public interface DatabaseService {
     void assignPermission(String username, String permission);
 
     boolean login(String username, String password);
-
-    String getUserRole(String username);
 }

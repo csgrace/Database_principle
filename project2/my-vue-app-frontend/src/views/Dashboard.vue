@@ -34,20 +34,6 @@
       </div>
     </div>
 
-    <section class="permission-section">
-      <div>
-        <h2>🔐 Active permissions: {{ userRole || 'USER' }}</h2>
-        <p>{{ roleDescription }}</p>
-      </div>
-      <div class="permission-list">
-        <span v-for="permission in permissions" :key="permission" class="permission-chip">{{ permission }}</span>
-      </div>
-      <div class="admin-actions" v-if="canManageJournals || canManageSystem">
-        <router-link v-if="canManageJournals" class="permission-action" to="/journals">Manage journals</router-link>
-        <router-link v-if="canManageSystem" class="permission-action" to="/admin">Open administration center</router-link>
-      </div>
-    </section>
-
     <!-- Search Section -->
     <div class="search-section">
       <div class="search-header">
@@ -164,27 +150,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-
 export default {
   name: 'Dashboard',
-  computed: {
-    ...mapGetters(['userRole', 'permissions']),
-    canManageJournals() {
-      return this.permissions.includes('journal:update');
-    },
-    canManageSystem() {
-      return this.permissions.includes('import') || this.permissions.includes('truncate');
-    },
-    roleDescription() {
-      const descriptions = {
-        USER: 'Read-only access to literature search and analytical queries.',
-        JOURNAL_ADMIN: 'Read access plus controlled updates to journal metadata and article-journal records.',
-        ADMIN: 'Full administrative access, including data import, truncate, user management, and journal updates.'
-      };
-      return descriptions[this.userRole] || descriptions.USER;
-    }
-  },
   data() {
     return {
       query: '',

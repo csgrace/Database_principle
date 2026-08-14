@@ -220,19 +220,6 @@ public class DatabaseServiceImpl implements DatabaseService {
         }
     }
 
-@Override
-public String getUserRole(String username) {
-String sql = "SELECT role FROM users WHERE LOWER(username) = LOWER(?)";
-try (Connection conn = dataSource.getConnection();
-PreparedStatement stmt = conn.prepareStatement(sql)) {
-stmt.setString(1, username);
-ResultSet rs = stmt.executeQuery();
-return rs.next() ? rs.getString("role") : null;
-} catch (SQLException e) {
-log.error("Error retrieving role for user '{}': {}", username, e.getMessage());
-throw new RuntimeException(e);
-}
-}
 
 @Override
 public boolean login(String username, String password) {
