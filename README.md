@@ -1,4 +1,6 @@
-# Database Principles [![SUSTech](https://img.shields.io/badge/SUSTech-CS307-blue)](https://www.sustech.edu.cn/) [![Course](https://img.shields.io/badge/Course-Database%20Principles-green)]() [![Language](https://img.shields.io/badge/Java-17%2B-orange)](https://adoptium.net/) [![Framework](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen)]() [![Frontend](https://img.shields.io/badge/Vue-3-42b883)]() [![Status](https://img.shields.io/badge/Status-Completed-brightgreen)]()
+# Database Principles
+
+[![SUSTech](https://img.shields.io/badge/SUSTech-CS307-blue)](https://www.sustech.edu.cn/) [![Course](https://img.shields.io/badge/Course-Database%20Principles-green)]() [![Language](https://img.shields.io/badge/Java-17%2B-orange)](https://adoptium.net/) [![Framework](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen)]() [![Frontend](https://img.shields.io/badge/Vue-3-42b883)]() [![Status](https://img.shields.io/badge/Status-Completed-brightgreen)]()
 
 > **CS307 Database Principles - Full-Stack Course Project**
 >
