@@ -8,7 +8,7 @@
       </div>
       <div class="backend-stats">
         <div class="backend-stat">
-          <div class="backend-stat-num">5</div>
+          <div class="backend-stat-num">13</div>
           <div class="backend-stat-text">Database Tables</div>
         </div>
         <div class="backend-stat">
@@ -114,22 +114,54 @@
       <p>No articles found. Try different keywords.</p>
     </div>
 
-    <!-- PostgreSQL Schema Info -->
-    <div class="schema-section">
-      <h2 class="section-title">🗄️ PostgreSQL Database Schema</h2>
-      <div class="schema-grid">
-        <div class="schema-card" v-for="table in schema" :key="table.name">
-          <div class="schema-name">{{ table.name }}</div>
-          <div class="schema-purpose">{{ table.purpose }}</div>
-          <ul class="schema-fields">
-            <li v-for="field in table.fields" :key="field.name">
-              <span :class="field.key">{{ field.key === 'pk' ? 'PK' : field.key === 'fk' ? 'FK' : '' }}</span>
-              {{ field.name }} <em>{{ field.type }}</em>
-            </li>
-          </ul>
+    <!-- Database Relationship Model -->
+    <section class="schema-section">
+      <div class="schema-heading">
+        <div>
+          <h2 class="section-title">🗄️ PostgreSQL Data Model — 13 Tables</h2>
+          <p class="schema-intro">The schema is centered on <code>Article</code>. Relationship tables resolve many-to-many links with authors, keywords, grants, publication types, and journals.</p>
+        </div>
+        <a class="er-source-link" href="https://github.com/csgrace/Database_principle/blob/main/project2/E-R%E5%9B%BE%20v1.drawio.png" target="_blank" rel="noopener">Open full E-R diagram ↗</a>
+      </div>
+
+      <div class="relation-map">
+        <div class="relation-column">
+          <h3>Core records</h3>
+          <div class="table-node primary"><strong>Article</strong><span>id · title · pub_model · dates</span></div>
+          <div class="table-node"><strong>Article_Ids</strong><span>article_id ↔ external identifiers</span></div>
+          <div class="table-node"><strong>article_references</strong><span>article_id ↔ cited article</span></div>
+        </div>
+
+        <div class="relation-column junction-column">
+          <h3>Link / junction tables</h3>
+          <div class="table-node junction"><strong>Article_Authors</strong><span>Article ↔ Authors</span></div>
+          <div class="table-node junction"><strong>Article_Keywords</strong><span>Article ↔ Keywords</span></div>
+          <div class="table-node junction"><strong>Article_Grants</strong><span>Article ↔ Grant_info</span></div>
+          <div class="table-node junction"><strong>Article_Publication_Types</strong><span>Article ↔ Publication_Types</span></div>
+          <div class="table-node junction"><strong>Article_Journal</strong><span>Article ↔ Journal</span></div>
+        </div>
+
+        <div class="relation-column">
+          <h3>Reference entities</h3>
+          <div class="table-node"><strong>Authors</strong><span>author identity and details</span></div>
+          <div class="table-node"><strong>Keywords</strong><span>controlled keyword vocabulary</span></div>
+          <div class="table-node"><strong>Grant_info</strong><span>grant_id · agency · country</span></div>
+          <div class="table-node"><strong>Publication_Types</strong><span>publication category</span></div>
+          <div class="table-node"><strong>Journal</strong><span>journal metadata</span></div>
         </div>
       </div>
-    </div>
+
+      <div class="relationship-legend">
+        <span><b>Article</b> is the central publication record.</span>
+        <span><b>Junction tables</b> preserve many-to-many relationships.</span>
+        <span><b>article_references</b> creates the citation graph between articles.</span>
+      </div>
+
+      <details class="er-details">
+        <summary>View the original E-R diagram from the project</summary>
+        <img src="https://raw.githubusercontent.com/csgrace/Database_principle/main/project2/E-R%E5%9B%BE%20v1.drawio.png" alt="Project 2 PostgreSQL E-R diagram" class="er-diagram" />
+      </details>
+    </section>
   </div>
 </template>
 
@@ -145,38 +177,6 @@ export default {
       queryTime: 0,
       apiStatus: null,
       filters: { title: true, abstract: true, author: false, journal: false },
-      schema: [
-        { name: 'articles', purpose: '2.5M+ articles with full-text index', fields: [
-          { name: 'pmid', type: 'INTEGER', key: 'pk' },
-          { name: 'title', type: 'TEXT', key: '' },
-          { name: 'abstract', type: 'TEXT', key: '' },
-          { name: 'pub_date', type: 'DATE', key: '' },
-          { name: 'doi', type: 'VARCHAR(255)', key: '' },
-          { name: 'journal_issn', type: 'VARCHAR(9)', key: 'fk' }
-        ]},
-        { name: 'authors', purpose: '850K+ authors', fields: [
-          { name: 'id', type: 'SERIAL', key: 'pk' },
-          { name: 'name', type: 'VARCHAR(255)', key: '' },
-          { name: 'affiliation', type: 'TEXT', key: '' },
-          { name: 'orcid', type: 'VARCHAR(19)', key: '' }
-        ]},
-        { name: 'journals', purpose: '12K+ journals with impact factor', fields: [
-          { name: 'issn', type: 'VARCHAR(9)', key: 'pk' },
-          { name: 'name', type: 'VARCHAR(500)', key: '' },
-          { name: 'impact_factor', type: 'NUMERIC', key: '' },
-          { name: 'publisher', type: 'VARCHAR(255)', key: '' }
-        ]},
-        { name: 'article_authors', purpose: 'M2M relationship', fields: [
-          { name: 'article_id', type: 'INTEGER', key: 'pk fk' },
-          { name: 'author_id', type: 'INTEGER', key: 'pk fk' },
-          { name: 'author_order', type: 'SMALLINT', key: '' }
-        ]},
-        { name: 'article_citations', purpose: 'Citation graph (recursive CTE)', fields: [
-          { name: 'citing_article', type: 'INTEGER', key: 'pk fk' },
-          { name: 'cited_article', type: 'INTEGER', key: 'pk fk' },
-          { name: 'created_at', type: 'TIMESTAMP', key: '' }
-        ]}
-      ],
       mockArticles: [
         { pmid: 38234567, title: 'Machine Learning Approaches in Healthcare: A Systematic Review', authors: ['Smith J', 'Chen L', 'Wang M'], journal: 'Nature Medicine', year: 2024, doi: '10.1038/s41591-024-02845-3', citations: 128, abstract: 'This study explores machine learning applications in clinical diagnostics and treatment planning. The review covers 200+ papers on deep learning, reinforcement learning, and statistical methods applied to healthcare data.' },
         { pmid: 37123456, title: 'Deep Neural Networks for Medical Image Classification', authors: ['Johnson K', 'Li P'], journal: 'IEEE Trans Med Imaging', year: 2023, doi: '10.1109/TMI.2023.3245678', citations: 256, abstract: 'We present a novel CNN architecture that achieves 96.7% accuracy on radiology image diagnosis. The model combines transformer attention with residual connections for improved healthcare screening.' },
@@ -542,92 +542,147 @@ export default {
 
 .schema-section {
   background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.schema-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .section-title {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   color: #1a1a2e;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #f3f4f6;
+  margin-bottom: 0.5rem;
 }
 
-.schema-grid {
+.schema-intro {
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: 720px;
+}
+
+.er-source-link {
+  flex-shrink: 0;
+  background: #edf2ff;
+  color: #4f46e5;
+  padding: 0.55rem 0.8rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.relation-map {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
 
-.schema-card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+.relation-column {
   padding: 1rem;
-  border-top: 3px solid #336791;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
 }
 
-.schema-name {
-  font-weight: 700;
-  color: #336791;
-  font-size: 1rem;
-  margin-bottom: 0.25rem;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.schema-purpose {
-  font-size: 0.8rem;
-  color: #64748b;
-  margin-bottom: 0.75rem;
-}
-
-.schema-fields {
-  list-style: none;
-  padding: 0;
-  font-size: 0.78rem;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.schema-fields li {
-  padding: 0.15rem 0;
+.relation-column h3 {
+  margin: 0 0 0.75rem;
   color: #475569;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.schema-fields li .pk {
-  background: #fef3c7;
+.junction-column {
+  background: #faf5ff;
+  border-color: #e9d5ff;
+}
+
+.table-node {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  margin-top: 0.65rem;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-left: 4px solid #64748b;
+  border-radius: 8px;
+}
+
+.table-node strong {
+  color: #1e293b;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.table-node span {
+  color: #64748b;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.table-node.primary {
+  border-left-color: #2563eb;
+  background: #eff6ff;
+}
+
+.table-node.junction {
+  border-left-color: #9333ea;
+  background: #ffffff;
+}
+
+.relationship-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  background: #fffbeb;
+  border-radius: 8px;
   color: #92400e;
-  padding: 0.05rem 0.3rem;
-  border-radius: 3px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  margin-right: 0.3rem;
+  font-size: 0.8rem;
 }
 
-.schema-fields li .fk {
-  background: #ede9fe;
-  color: #5b21b6;
-  padding: 0.05rem 0.3rem;
-  border-radius: 3px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  margin-right: 0.3rem;
+.er-details {
+  margin-top: 1.25rem;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
 }
 
-.schema-fields li em {
-  color: #94a3b8;
-  font-style: normal;
-  font-size: 0.7rem;
+.er-details summary {
+  cursor: pointer;
+  color: #4f46e5;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.er-diagram {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
 }
 
 @media (max-width: 640px) {
   .search-box {
     flex-direction: column;
   }
-  .results-header {
+  .results-header,
+  .schema-heading {
     flex-direction: column;
     gap: 0.5rem;
+  }
+  .relation-map {
+    grid-template-columns: 1fr;
   }
   .result-footer {
     flex-direction: column;
