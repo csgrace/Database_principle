@@ -12,7 +12,7 @@
           <div class="backend-stat-text">Database Tables</div>
         </div>
         <div class="backend-stat">
-          <div class="backend-stat-num">8+</div>
+          <div class="backend-stat-num">13</div>
           <div class="backend-stat-text">REST API Endpoints</div>
         </div>
         <div class="backend-stat">
@@ -67,21 +67,9 @@
           {{ loading ? 'Searching...' : 'Search' }}
         </button>
       </div>
-      <div class="search-filters">
-        <label><input type="checkbox" v-model="filters.title" /> Search Title</label>
-        <label><input type="checkbox" v-model="filters.abstract" /> Search Abstract</label>
-        <label><input type="checkbox" v-model="filters.author" /> Search Authors</label>
-        <label><input type="checkbox" v-model="filters.journal" /> Search Journals</label>
-      </div>
       <div class="search-hint">
         <p>💡 <strong>Supported inputs:</strong> Keywords | Author names | Exact PMID (PubMed ID) | Journal names | MeSH terms | Publication year | DOI</p>
       </div>
-    </div>
-
-    <!-- API Status -->
-    <div v-if="apiStatus" class="api-status" :class="apiStatus.type">
-      <span class="status-icon">{{ apiStatus.type === 'loading' ? '⏳' : apiStatus.type === 'success' ? '✅' : '❌' }}</span>
-      {{ apiStatus.message }}
     </div>
 
     <!-- Results -->
@@ -171,8 +159,6 @@ export default {
       searched: false,
       results: [],
       queryTime: 0,
-      apiStatus: null,
-      filters: { title: true, abstract: true, author: false, journal: false },
       mockArticles: [
         { pmid: 38234567, title: 'Machine Learning Approaches in Healthcare: A Systematic Review', authors: ['Smith J', 'Chen L', 'Wang M'], journal: 'Nature Medicine', year: 2024, doi: '10.1038/s41591-024-02845-3', citations: 128, abstract: 'This study explores machine learning applications in clinical diagnostics and treatment planning. The review covers 200+ papers on deep learning, reinforcement learning, and statistical methods applied to healthcare data.' },
         { pmid: 37123456, title: 'Deep Neural Networks for Medical Image Classification', authors: ['Johnson K', 'Li P'], journal: 'IEEE Trans Med Imaging', year: 2023, doi: '10.1109/TMI.2023.3245678', citations: 256, abstract: 'We present a novel CNN architecture that achieves 96.7% accuracy on radiology image diagnosis. The model combines transformer attention with residual connections for improved healthcare screening.' },
@@ -191,12 +177,8 @@ export default {
       
       this.loading = true;
       this.searched = true;
-      this.apiStatus = { type: 'loading', message: 'Connecting to Spring Boot API → PostgreSQL full-text search...' };
-      
-      // Simulate API call to Spring Boot backend
+      // Simulate query latency for the static GitHub Pages demo.
       await this.delay(800 + Math.random() * 600);
-      
-      this.apiStatus = null;
       
       // Filter mock results based on query
       const q = this.query.toLowerCase();
@@ -400,54 +382,6 @@ export default {
 .search-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-}
-
-.search-filters {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.search-filters label {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-  color: #4b5563;
-  cursor: pointer;
-}
-
-.search-filters input {
-  accent-color: #667eea;
-}
-
-.api-status {
-  background: white;
-  border-radius: 10px;
-  padding: 1rem 1.5rem;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.9rem;
-  border-left: 4px solid;
-}
-
-.api-status.loading {
-  border-color: #f59e0b;
-  background: #fffbeb;
-  color: #92400e;
-}
-
-.api-status.success {
-  border-color: #10b981;
-  background: #ecfdf5;
-  color: #065f46;
-}
-
-.status-icon {
-  font-size: 1.2rem;
 }
 
 .results-section {
