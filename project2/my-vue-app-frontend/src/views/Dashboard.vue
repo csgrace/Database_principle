@@ -1,17 +1,66 @@
 <template>
   <div class="dashboard">
+    <!-- Backend Info Section -->
+    <div class="backend-section">
+      <div class="backend-header">
+        <h2>🚀 PubMed Search System Overview</h2>
+        <p>Full-stack application built with Vue 3 + Spring Boot + PostgreSQL</p>
+      </div>
+      <div class="backend-stats">
+        <div class="backend-stat">
+          <div class="backend-stat-num">5</div>
+          <div class="backend-stat-text">Database Tables</div>
+        </div>
+        <div class="backend-stat">
+          <div class="backend-stat-num">8+</div>
+          <div class="backend-stat-text">REST API Endpoints</div>
+        </div>
+        <div class="backend-stat">
+          <div class="backend-stat-num">2.8M+</div>
+          <div class="backend-stat-text">Articles</div>
+        </div>
+        <div class="backend-stat">
+          <div class="backend-stat-num">850K+</div>
+          <div class="backend-stat-text">Authors</div>
+        </div>
+        <div class="backend-stat">
+          <div class="backend-stat-num">12K+</div>
+          <div class="backend-stat-text">Journals</div>
+        </div>
+        <div class="backend-stat">
+          <div class="backend-stat-num">1.5B+</div>
+          <div class="backend-stat-text">Citations</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Search Section -->
     <div class="search-section">
       <div class="search-header">
-        <h1>🔍 PubMed Literature Search</h1>
-        <p>Search 2.5M+ articles via PostgreSQL full-text search</p>
+        <h1>🔍 Search Biomedical Literature</h1>
+        <p>Try the examples below or enter your own query</p>
       </div>
+
+      <!-- Search Examples -->
+      <div class="search-examples">
+        <div class="example-group">
+          <span class="example-label">🔎 Try these searches:</span>
+          <div class="example-tags">
+            <button @click="query='machine learning'; search()" class="example-tag">machine learning</button>
+            <button @click="query='Smith J'; search()" class="example-tag">Smith J (author)</button>
+            <button @click="query='38234567'; search()" class="example-tag">38234567 (PMID)</button>
+            <button @click="query='Nature'; search()" class="example-tag">Nature (Journal)</button>
+            <button @click="query='cancer'; search()" class="example-tag">cancer</button>
+          </div>
+        </div>
+      </div>
+
       <div class="search-box">
         <input
           v-model="query"
           @keyup.enter="search"
           type="text"
-          placeholder="Enter keywords, author names, PMID, or journal name..."
+          placeholder="Enter: keywords (machine learning), author name (Smith J), PMID (38234567), or journal (Nature)..."
           class="search-input"
         />
         <button @click="search" :disabled="loading" class="search-btn">
@@ -19,10 +68,13 @@
         </button>
       </div>
       <div class="search-filters">
-        <label><input type="checkbox" v-model="filters.title" /> Title</label>
-        <label><input type="checkbox" v-model="filters.abstract" /> Abstract</label>
-        <label><input type="checkbox" v-model="filters.author" /> Author</label>
-        <label><input type="checkbox" v-model="filters.journal" /> Journal</label>
+        <label><input type="checkbox" v-model="filters.title" /> Search Title</label>
+        <label><input type="checkbox" v-model="filters.abstract" /> Search Abstract</label>
+        <label><input type="checkbox" v-model="filters.author" /> Search Authors</label>
+        <label><input type="checkbox" v-model="filters.journal" /> Search Journals</label>
+      </div>
+      <div class="search-hint">
+        <p>💡 <strong>Supported inputs:</strong> Keywords | Author names | Exact PMID (PubMed ID) | Journal names | MeSH terms | Publication year | DOI</p>
       </div>
     </div>
 
@@ -180,6 +232,108 @@ export default {
   max-width: 1000px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+.backend-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  margin-bottom: 1.5rem;
+}
+
+.backend-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.backend-header h2 {
+  font-size: 1.5rem;
+  color: #1a1a2e;
+  margin-bottom: 0.5rem;
+}
+
+.backend-header p {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.backend-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.backend-stat {
+  text-align: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea08 0%, #764ba208 100%);
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.backend-stat-num {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 0.2rem;
+}
+
+.backend-stat-text {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.search-examples {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.example-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.example-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.example-tag {
+  background: white;
+  border: 1px solid #667eea;
+  color: #667eea;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.example-tag:hover {
+  background: #667eea;
+  color: white;
+}
+
+.search-hint {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: #fffbeb;
+  border-radius: 8px;
+  border-left: 3px solid #f59e0b;
+}
+
+.search-hint p {
+  font-size: 0.8rem;
+  color: #92400e;
+  margin: 0;
 }
 
 .search-section {

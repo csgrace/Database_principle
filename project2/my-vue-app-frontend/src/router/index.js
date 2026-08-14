@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Login from '@/views/Login.vue';
 import Dashboard from '@/views/Dashboard.vue';
-import Logout from '@/components/Logout.vue';
+import Logout from '@/views/Logout.vue';
 import store from '@/store';
 
 const routes = [
