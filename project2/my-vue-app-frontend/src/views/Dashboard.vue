@@ -167,7 +167,8 @@ export default {
         { pmid: 38456789, title: 'Transformer Models for Protein Structure Prediction', authors: ['Zhang Y', 'Liu X'], journal: 'Nature Methods', year: 2024, doi: '10.1038/s41592-024-02189-4', citations: 312, abstract: 'We introduce an attention-based architecture that achieves state-of-the-art accuracy on protein folding prediction. The model leverages evolutionary features and geometric attention mechanisms.' },
         { pmid: 37890123, title: 'Federated Learning for Multi-Institutional Clinical Data', authors: ['Anderson M', 'Taylor R', 'Wilson J'], journal: 'Lancet Digit Health', year: 2023, doi: '10.1016/S2589-7500(23)00123-4', citations: 94, abstract: 'This paper presents a federated learning framework enabling collaborative model training across hospitals without sharing patient data. Privacy-preserving techniques ensure HIPAA compliance.' },
         { pmid: 39012345, title: 'Graph Neural Networks for Drug-Target Interaction Prediction', authors: ['Martinez C', 'Lee H'], journal: 'Bioinformatics', year: 2024, doi: '10.1093/bioinformatics/btad456', citations: 76, abstract: 'We propose a graph convolutional network approach for predicting drug-target interactions. The model integrates molecular graphs with protein structure features for improved prediction accuracy.' },
-        { pmid: 36789012, title: 'Bayesian Optimization for Hyperparameter Tuning in Clinical ML Models', authors: ['Roberts D', 'Clark E'], journal: 'Med Image Anal', year: 2023, doi: '10.1016/j.media.2023.102876', citations: 145, abstract: 'This work applies Bayesian optimization to efficiently tune hyperparameters in clinical machine learning pipelines. Results show 3x faster convergence compared to grid search methods.' }
+        { pmid: 36789012, title: 'Bayesian Optimization for Hyperparameter Tuning in Clinical ML Models', authors: ['Roberts D', 'Clark E'], journal: 'Med Image Anal', year: 2023, doi: '10.1016/j.media.2023.102876', citations: 145, abstract: 'This work applies Bayesian optimization to efficiently tune hyperparameters in clinical machine learning pipelines. Results show 3x faster convergence compared to grid search methods.' },
+        { pmid: 39567890, title: 'Machine Learning Models for Cancer Detection from Clinical Data', authors: ['Miller A', 'Patel N'], journal: 'Cancer Informatics', year: 2024, doi: '10.1177/1176935124123456', citations: 61, abstract: 'This study evaluates supervised learning models for early cancer detection using clinical and genomic features. The proposed approach improves screening sensitivity across multiple cancer types.' }
       ]
     };
   },
@@ -180,20 +181,25 @@ export default {
       // Simulate query latency for the static GitHub Pages demo.
       await this.delay(800 + Math.random() * 600);
       
-      // Filter mock results based on query
-      const q = this.query.toLowerCase();
-      this.results = this.mockArticles.filter(a => 
-        a.title.toLowerCase().includes(q) ||
-        a.abstract.toLowerCase().includes(q) ||
-        a.authors.some(auth => auth.toLowerCase().includes(q)) ||
-        a.journal.toLowerCase().includes(q) ||
-        q.includes('machine') || q.includes('learning') || q.includes('health') || q.includes('medical') || q.includes('clinical') || q.includes('drug')
-      );
-      
-      // If query doesn't match specifically, return top results as "related"
-      if (this.results.length === 0 && q.length > 2) {
-        this.results = this.mockArticles.slice(0, 3);
-      }
+      // Search the static demo dataset. PMID is an exact lookup; other inputs are
+      // matched against title, abstract, author, journal, year, and DOI.
+      const normalizedQuery = this.query.trim().toLowerCase();
+      const terms = normalizedQuery.split(/\s+/).filter(Boolean);
+
+      this.results = this.mockArticles.filter(article => {
+        if (String(article.pmid) === normalizedQuery) return true;
+
+        const searchableText = [
+          article.title,
+          article.abstract,
+          article.authors.join(' '),
+          article.journal,
+          String(article.year),
+          article.doi
+        ].join(' ').toLowerCase();
+
+        return terms.every(term => searchableText.includes(term));
+      });
       
       this.queryTime = Math.floor(12 + Math.random() * 45);
       this.loading = false;
