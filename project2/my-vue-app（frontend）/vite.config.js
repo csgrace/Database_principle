@@ -4,14 +4,19 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  base: '/Database_principle/',
   server: {
-    port: 8080, // 设置 Vue.js 应用使用的端口
+    port: 8080,
     proxy: {
       '/api': {
-        target: 'http://localhost:8081', // 代理到 Spring Boot 应用
+        target: 'http://localhost:8081',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets'
   }
 })

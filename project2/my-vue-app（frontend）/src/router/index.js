@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import Login from '@/views/Login.vue';
 import Dashboard from '@/views/Dashboard.vue';
 import Logout from '@/components/Logout.vue'; // 导入 Logout 组件
@@ -24,7 +24,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 });
 
