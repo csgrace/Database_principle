@@ -1,10 +1,16 @@
 import { createStore } from 'vuex';
-import axios from 'axios';
 
 export default createStore({
   state: {
-    user: null,
-    userRole: null
+    user: {
+      name: 'Demo User',
+      role: 'admin',
+      username: 'demo',
+      password: 'demo',
+      permissions: ['read', 'write', 'admin']
+    },
+    userRole: 'admin',
+    isDemoMode: true
   },
   mutations: {
     setUser(state, user) {
@@ -19,18 +25,16 @@ export default createStore({
     }
   },
   actions: {
-    async loginUser({ commit }, credentials) {
-      try {
-        console.log('Login credentials:', credentials); // 添加调试信息
-        const response = await axios.post('/api/login', credentials);
-        console.log('API response:', response); // 添加调试信息
-        const user = response.data.user;
-        commit('setUser', user);
-        commit('setUserRole', user.role);
-      } catch (error) {
-        console.error('API error:', error); // 添加调试信息
-        throw new Error('Invalid username or password');
-      }
+    loginUser({ commit }, credentials) {
+      // Demo mode: accept any credentials
+      const user = {
+        name: credentials.username || 'Demo User',
+        role: 'admin',
+        username: credentials.username || 'demo',
+        permissions: ['read', 'write', 'admin']
+      };
+      commit('setUser', user);
+      commit('setUserRole', user.role);
     },
     logout({ commit }) {
       commit('logout');

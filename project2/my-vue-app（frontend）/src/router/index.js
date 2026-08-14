@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Login from '@/views/Login.vue';
 import Dashboard from '@/views/Dashboard.vue';
-import Logout from '@/components/Logout.vue'; // 导入 Logout 组件
+import Logout from '@/components/Logout.vue';
 import store from '@/store';
 
 const routes = [
@@ -9,7 +9,7 @@ const routes = [
     path: '/',
     name: 'Dashboard',
     component: Dashboard,
-    meta: { requiresAuth: true, roles: ['admin', 'user'] }
+    meta: { requiresAuth: false }
   },
   {
     path: '/login',
@@ -29,17 +29,8 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!store.getters.isAuthenticated) {
-      next({ name: 'Login' });
-    } else if (to.meta.roles && !to.meta.roles.includes(store.getters.userRole)) {
-      next({ name: 'Login' });
-    } else {
-      next();
-    }
-  } else {
-    next();
-  }
+  // Demo mode: allow all navigation
+  next();
 });
 
 export default router;
