@@ -1,68 +1,331 @@
-# 📚 Database_principle 项目简介
+# Database Principles [![SUSTech](https://img.shields.io/badge/SUSTech-CS307-blue)](https://www.sustech.edu.cn/) [![Course](https://img.shields.io/badge/Course-Database%20Principles-green)]() [![Language](https://img.shields.io/badge/Java-17%2B-orange)](https://adoptium.net/) [![Framework](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen)]() [![Frontend](https://img.shields.io/badge/Vue-3-42b883)]() [![Status](https://img.shields.io/badge/Status-Completed-brightgreen)]()
 
-欢迎来到 **CS307 数据库原理 Project**！
-
-本项目围绕数据库原理课程展开，覆盖了数据库设计、实现与实际操作，主要采用 Java ☕ 结合 PostgreSQL 🐘 技术栈进行开发与实验。
-
----
-
-## 🗂️ 仓库信息
-
-- **项目名称**：Database_principle
-- **主要语言**：Java ☕ & PostgreSQL 🐘
-- **适用课程**：CS307 数据库原理
-- **典型框架**：Spring Boot、JDBC
-- **数据库**：PostgreSQL 16
+> **CS307 Database Principles - Full-Stack Course Project**
+>
+> A PubMed literature search system with full-stack Java + Vue.js implementation, featuring complex database design, data import pipeline, and interactive frontend.
 
 ---
 
-## ✨ 项目亮点
+## Overview
 
-- 💡 结合理论与实践，提供从数据库 schema 设计到数据导入、用户权限、业务接口实现等全流程代码。
-- 🛠️ 代码结构清晰，模块划分明确，方便查阅与复用。
-- 📄 提供标准化数据导入脚本 [`GoodLoader`](project2/submit/GoodLoader.java)，可保证本地测试环境与评测环境一致。
-- 🧩 支持批量数据导入、数据清理（truncate）、用户权限管理等数据库常用操作。
-- 🔒 涉及数据库用户创建、登录与 PL/pgSQL 脚本执行，贴合实际业务场景。
+This project implements a **full-stack PubMed literature search system** as the capstone of CS307 Database Principles at SUSTech. Starting from database schema design and E-R modeling, we progressively built a PostgreSQL-compatible database with data import pipelines (processing millions of scientific articles) and a Spring Boot + Vue.js web application for real-time literature search and management.
 
----
+### Key Technical Highlights
 
-## 🚀 快速开始
-
-1. **环境准备**
-   - 安装 [PostgreSQL](https://www.postgresql.org/docs/16/index.html) 数据库
-   - 安装 [Java 17+](https://adoptium.net/) 及 [Gradle](https://gradle.org/)
-2. **克隆仓库**
-   ```bash
-   git clone https://github.com/csgrace/Database_principle.git
-   ```
-3. **配置数据库连接**
-   - 按需修改 `GoodLoader.java`、`DatabaseCleaner.java` 等文件中的数据库连接信息（host、user、password 等）。
-4. **数据导入**
-   - 使用 `GoodLoader` 脚本将标准数据文件（如 `pubmed24n.ndjson`）导入 PostgreSQL。
-5. **运行后端服务**
-   - 进入相关子项目目录，使用 Gradle 进行构建和启动。
+- **Database Design**: Complete E-R model with pubmed articles, authors, journals, and citation relationships
+- **Data Import Pipeline**: Custom `GoodLoader` bulk import tool with truncate-and-refresh, user management, and PL/pgSQL script execution
+- **RESTful API**: Spring Boot backend with layered architecture (Controller -> Service -> Repository)
+- **Interactive Frontend**: Vue 3 + Vite SPA with Axios-driven data fetching
+- **Multi-language Support**: Python (data preprocessing), Java (core + backend), Vue.js (frontend)
 
 ---
 
-## 🗃️ 目录结构概览
+## System Architecture
 
-- `project1/`：第一阶段实验代码，包括数据库清理、数据插入、SQL 测试等
-- `project2/`：第二阶段，包含后端接口、业务实现、批量数据导入等
-- `project2/submit/GoodLoader.java`：标准数据导入脚本（支持自定义 schema）
-- `project2/Project2_code（backend_to_frontend）/`：Spring Boot 后端、接口实现
-- `README.md`、`requirements.md`：项目说明与需求文档
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Frontend (Vue 3 + Vite)                      │
+│  ┌─────────────┐  ┌──────────────┐  ┌──────────────────────────┐  │
+│  │ Search UI   │  │ Article List │  │ Author / Journal Detail  │  │
+│  └──────┬──────┘  └──────┬───────┘  └────────────┬─────────────┘  │
+└─────────┼────────────────┼───────────────────────┼─────────────────┘
+          │                │                       │
+          ▼                ▼                       ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Backend (Spring Boot + JDBC)                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │ REST API Layer                                              │   │
+│  │  GET /api/articles/search       - Full-text search          │   │
+│  │  GET /api/articles/{id}         - Article detail            │   │
+│  │  GET /api/authors/{name}        - Author info               │   │
+│  │  GET /api/journals/{issn}       - Journal detail            │   │
+│  │  GET /api/citations/{articleId} - Citation graph            │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│  ┌──────────────────────┐   ┌─────────────────────────────────┐   │
+│  │ Service Layer        │   │ Repository Layer (JDBC)         │   │
+│  └──────────────────────┘   └─────────────────────────────────┘   │
+└─────────────────────────────────┬───────────────────────────────────┘
+                                  │
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Database (PostgreSQL 16)                        │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │
+│  │articles  │  │authors   │  │journals  │  │article_citations │   │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │ PL/pgSQL Functions / Triggers / Indexes                    │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Data Import Pipeline
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  Raw Data Files │ --> │ Python Parser   │ --> │ Transformed     │
+│  (.ndjson)      │     │ (preprocessing) │     │ .csv / .sql     │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+                                                        │
+                                                        ▼
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  PostgreSQL     │ <-- │ GoodLoader.java │ <-- │ SQL Scripts     │
+│  Database       │     │ (bulk import)   │     │ (schema + data) │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+```
 
 ---
 
-## 🔗 相关资料
+## Database Design
 
-- [PostgreSQL 16 官方文档](https://www.postgresql.org/docs/16/index.html)
-- [Spring Boot 2.7 文档](https://docs.spring.io/spring-boot/docs/2.7.16/reference/htmlsingle/)
-- [Gradle 用户手册](https://docs.gradle.org/8.3/userguide/userguide.html)
-- [Lombok 特性](https://projectlombok.org/features/)
+### Entity-Relationship Model
+
+```mermaid
+erDiagram
+    ARTICLE ||--o{ ARTICLE_AUTHOR : has
+    ARTICLE ||--o{ ARTICLE_CITATION : cites
+    ARTICLE }o--|| JOURNAL : published_in
+    AUTHOR ||--o{ ARTICLE_AUTHOR : writes
+    
+    ARTICLE {
+        int pmid PK
+        string title
+        string abstract
+        date pub_date
+        string doi
+    }
+    AUTHOR {
+        int id PK
+        string name
+        string affiliation
+    }
+    JOURNAL {
+        string issn PK
+        string name
+        float impact_factor
+    }
+    ARTICLE_AUTHOR {
+        int article_id FK
+        int author_id FK
+        int author_order
+    }
+    ARTICLE_CITATION {
+        int citing_article FK
+        int cited_article FK
+    }
+```
+
+### Schema Highlights
+
+| Table | Purpose | Key Constraints |
+|-------|---------|-----------------|
+| `articles` | Core pubmed articles | PK `pmid`, full-text index on `title`/`abstract` |
+| `authors` | Author information | Unique `name` + `affiliation` |
+| `journals` | Journal metadata | PK `issn`, unique `name` |
+| `article_authors` | Many-to-many relationship | Composite PK `(article_id, author_id)` |
+| `article_citations` | Citation graph | Foreign keys referencing `articles.pmid` |
 
 ---
 
-> 📎 更多详情请参考各类文档及源码文件，欢迎学习与交流！
+## Project 1: Database Foundation
 
+### Tasks & Implementation
 
+| Task | Description | Technology |
+|------|-------------|------------|
+| **Schema Design** | Create complete database schema with constraints | SQL (DDL) |
+| **Data Import** | Import pubmed data with validation | Java + JDBC |
+| **Data Cleaning** | Truncate, reset, and manage data lifecycle | PL/pgSQL |
+| **User Management** | Create roles with appropriate permissions | PL/pgSQL |
+| **SQL Queries** | Complex queries with JOINs, aggregations, subqueries | SQL |
+
+### Directory Structure
+
+```
+project1/
+├── files/                          # Data files and resources
+├── src_java/                       # Java source code
+│   ├── DatabaseCleaner.java        # Database truncate/reset utility
+│   ├── DataInserter.java           # Batch data insertion
+│   └── ...                         # Other utilities
+├── src_python/                     # Python preprocessing scripts
+│   └── data_parser.py              # NDJSON -> CSV transformer
+├── src_sql/                        # SQL scripts
+│   ├── schema_create.sql           # DDL statements
+│   ├── schema_drop.sql             # Cleanup script
+│   ├── queries.sql                 # Sample queries
+│   └── user_management.sql         # Role/permission scripts
+├── Fall 2024 CS307 Project Part I.pdf   # Course requirements
+├── Report_12311004_12311043.pdf         # Project report
+└── database_project_final.zip           # Submission package
+```
+
+---
+
+## Project 2: Full-Stack Application
+
+### Architecture Components
+
+#### Backend (Spring Boot)
+
+| Layer | Package | Responsibility |
+|-------|---------|----------------|
+| **Controller** | `com.cs307.controller` | REST endpoints, request validation |
+| **Service** | `com.cs307.service` | Business logic, data transformation |
+| **Repository** | `com.cs307.repository` | Database access via JDBC |
+| **Model** | `com.cs307.model` | Entity classes (Article, Author, Journal) |
+| **Config** | `com.cs307.config` | Database connection, CORS settings |
+
+#### Frontend (Vue 3)
+
+| Component | Purpose |
+|-----------|---------|
+| **SearchView** | Main search interface with filters |
+| **ArticleList** | Paginated article display with sorting |
+| **ArticleDetail** | Single article view with citation info |
+| **AuthorView** | Author profile with publication list |
+| **JournalView** | Journal details and published articles |
+| **CitationGraph** | Interactive citation relationship visualization |
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/articles/search?q={query}&page={n}` | Full-text search with pagination |
+| `GET` | `/api/articles/{pmid}` | Get article detail by PMID |
+| `GET` | `/api/articles/{pmid}/authors` | Get authors of an article |
+| `GET` | `/api/articles/{pmid}/citations` | Get citation references |
+| `GET` | `/api/authors/{name}` | Get author info and publications |
+| `GET` | `/api/journals/{issn}` | Get journal details |
+| `GET` | `/api/journals/{issn}/articles` | Get articles published in journal |
+| `GET` | `/api/stats/overview` | Database statistics Overview |
+
+### Directory Structure
+
+```
+project2/
+├── Project2_code（backend_to_frontend）/    # Spring Boot backend
+│   ├── src/main/java/com/cs307/
+│   │   ├── Application.java                # Entry point
+│   │   ├── controller/                     # REST controllers
+│   │   ├── service/                        # Business logic
+│   │   ├── repository/                     # Data access layer
+│   │   ├── model/                          # Entity classes
+│   │   └── config/                         # Configuration
+│   └── src/main/resources/
+│       └── application.yml                 # App configuration
+├── my-vue-app（frontend）/                  # Vue 3 frontend
+│   ├── src/
+│   │   ├── views/                          # Page components
+│   │   ├── components/                     # Reusable components
+│   │   ├── router/                         # Vue Router config
+│   │   ├── services/                       # API service layer
+│   │   └── store/                          # State management
+│   ├── public/                             # Static assets
+│   ├── package.json                        # Dependencies
+│   └── vite.config.js                      # Build config
+├── pubmed-main/                            # PubMed data processing
+├── submit/                                 # Submission files
+│   └── GoodLoader.java                     # Standard data import script
+├── Datagrip_diagram.png                    # Database diagram
+├── E-R图 v1.drawio                         # ER diagram source
+├── E-R图 v1.drawio.png                     # ER diagram image
+├── report_12311004_12311043.pdf             # Project report
+└── README.md                               # Project2 documentation
+```
+
+---
+
+## Data Flow
+
+```
+User ──> Vue Frontend ──> REST API ──> Spring Boot ──> PostgreSQL
+  ^                              │                         │
+  │                              │                         │
+  └────── JSON Response ◄────────┘◄────── Query Result ◄──┘
+
+Import Flow:
+pubmed24n.ndjson ──> Python Parser ──> CSV Files ──> GoodLoader.java ──> PostgreSQL
+```
+
+---
+
+## Results
+
+- [x] Complete E-R model with 5 entities and 4 relationships
+- [x] Schema creation with proper constraints, indexes, and triggers
+- [x] GoodLoader successfully imports millions of article records
+- [x] PL/pgSQL scripts for database management (truncate, user roles)
+- [x] Spring Boot backend with 8+ REST endpoints
+- [x] Vue 3 frontend with search, detail, and browsing features
+- [x] Full CRUD operations visible through web interface
+- [x] Multi-table JOIN queries optimized with indexes
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| **Java** | 17+ | Backend runtime |
+| **PostgreSQL** | 16 | Database server |
+| **Gradle** | 8.3+ | Java build tool |
+| **Node.js** | 18+ | Frontend runtime |
+| **Python** | 3.8+ | Data preprocessing |
+
+### Setup Steps
+
+```bash
+# 1. Clone repository
+git clone https://github.com/csgrace/Database_principle.git
+cd Database_principle
+
+# 2. Set up PostgreSQL database
+psql -U postgres -f project1/src_sql/schema_create.sql
+
+# 3. Import data using GoodLoader
+cd project2/submit
+javac GoodLoader.java
+java GoodLoader --input ../pubmed-main/data.ndjson --schema cs307
+
+# 4. Start Spring Boot backend
+cd ../Project2_code（backend_to_frontend）
+./gradlew bootRun
+
+# 5. Start Vue frontend
+cd ../my-vue-app（frontend）
+npm install
+npm run dev
+
+# 6. Access application
+# Frontend: http://localhost:5173
+# Backend API: http://localhost:8080
+```
+
+---
+
+## Highlights
+
+| Feature | Description |
+|---------|-------------|
+| **Custom Data Loader** | `GoodLoader` with batch insertion, truncate-refresh, schema isolation |
+| **Full-Text Search** | PostgreSQL tsvector-powered search across article titles and abstracts |
+| **Citation Graph** | Recursive CTE queries for citation chain traversal |
+| **Layered Architecture** | Clean separation: Controller -> Service -> Repository |
+| **Responsive UI** | Vue 3 Composition API with real-time search and pagination |
+| **Multi-language Stack** | Python (etl) + Java (backend) + Vue.js (frontend) |
+| **Automated Import** | Single-command data pipeline from raw NDJSON to queryable database |
+
+---
+
+## Tech Stack Summary
+
+| Layer | Technology | Version |
+|-------|------------|---------|
+| **Database** | PostgreSQL | 16 |
+| **Backend** | Spring Boot + JDBC + Gradle | 2.7 / 8.3 |
+| **Frontend** | Vue 3 + Vite + Axios | Latest |
+| **Data Processing** | Python (pandas, json) | 3.8+ |
+| **Build Tool** | Gradle / npm | - |
+| **Version Control** | Git + GitHub | - |
