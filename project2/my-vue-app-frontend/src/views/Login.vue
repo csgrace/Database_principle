@@ -8,26 +8,28 @@
       </div>
 
       <form @submit.prevent="login" class="login-form">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input
-            id="username"
-            v-model="username"
-            type="text"
-            placeholder="Enter username (any for demo)"
-            required
-          />
-        </div>
+        <div class="credentials-row">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              id="username"
+              v-model="username"
+              type="text"
+              placeholder="Enter username"
+              required
+            />
+          </div>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            placeholder="Enter password (any for demo)"
-            required
-          />
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              id="password"
+              v-model="password"
+              type="password"
+              placeholder="Enter password"
+              required
+            />
+          </div>
         </div>
 
         <fieldset class="role-selector">
@@ -148,6 +150,12 @@ export default {
   gap: 1rem;
 }
 
+.credentials-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -247,5 +255,12 @@ export default {
   font-size: 0.8rem;
   color: #9ca3af;
   margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .credentials-row {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

@@ -6,7 +6,7 @@
         <span>SUSTC PubMed System</span>
       </div>
       <div class="nav-user" v-if="isAuthenticated">
-        <span class="user-badge" :class="userRole">{{ userRole }}</span>
+        <span class="user-badge" :class="userRole.toLowerCase()">{{ userRole }}</span>
         <span class="user-name">{{ user?.name || 'User' }}</span>
         <button class="logout-btn" @click="handleLogout">Logout</button>
       </div>
@@ -97,6 +97,11 @@ body {
 
 .user-badge.user {
   background: #3b82f6;
+  color: white;
+}
+
+.user-badge.journal_admin {
+  background: #8b5cf6;
   color: white;
 }
 

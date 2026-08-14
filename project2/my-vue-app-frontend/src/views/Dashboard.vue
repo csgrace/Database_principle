@@ -43,11 +43,9 @@
         <span v-for="permission in permissions" :key="permission" class="permission-chip">{{ permission }}</span>
       </div>
       <div class="admin-actions" v-if="canManageJournals || canManageSystem">
-        <button v-if="canManageJournals" class="permission-action" @click="showPermissionNotice('Journal update')">Update journal metadata</button>
-        <button v-if="canManageSystem" class="permission-action" @click="showPermissionNotice('Data import')">Import data</button>
-        <button v-if="canManageSystem" class="permission-action danger" @click="showPermissionNotice('Database truncate')">Truncate database</button>
+        <router-link v-if="canManageJournals" class="permission-action" to="/journals">Manage journals</router-link>
+        <router-link v-if="canManageSystem" class="permission-action" to="/admin">Open administration center</router-link>
       </div>
-      <p v-if="permissionNotice" class="permission-notice">{{ permissionNotice }}</p>
     </section>
 
     <!-- Search Section -->
@@ -194,7 +192,6 @@ export default {
       searched: false,
       results: [],
       queryTime: 0,
-      permissionNotice: '',
       mockArticles: [
         { pmid: 38234567, title: 'Machine Learning Approaches in Healthcare: A Systematic Review', authors: ['Smith J', 'Chen L', 'Wang M'], journal: 'Nature Medicine', year: 2024, doi: '10.1038/s41591-024-02845-3', citations: 128, abstract: 'This study explores machine learning applications in clinical diagnostics and treatment planning. The review covers 200+ papers on deep learning, reinforcement learning, and statistical methods applied to healthcare data.' },
         { pmid: 37123456, title: 'Deep Neural Networks for Medical Image Classification', authors: ['Johnson K', 'Li P'], journal: 'IEEE Trans Med Imaging', year: 2023, doi: '10.1109/TMI.2023.3245678', citations: 256, abstract: 'We present a novel CNN architecture that achieves 96.7% accuracy on radiology image diagnosis. The model combines transformer attention with residual connections for improved healthcare screening.' },
@@ -242,9 +239,6 @@ export default {
     },
     delay(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
-    },
-    showPermissionNotice(operation) {
-      this.permissionNotice = `${operation} is permitted for ${this.userRole}. In the local Spring Boot + PostgreSQL deployment, this operation is executed only after backend and database privilege checks.`;
     }
   }
 };
