@@ -79,40 +79,7 @@ This project implements a **full-stack PubMed literature search system** as the 
 
 ### Entity-Relationship Model
 
-```mermaid
-erDiagram
-    ARTICLE ||--o{ ARTICLE_AUTHOR : has
-    ARTICLE ||--o{ ARTICLE_CITATION : cites
-    ARTICLE }o--|| JOURNAL : published_in
-    AUTHOR ||--o{ ARTICLE_AUTHOR : writes
-    
-    ARTICLE {
-        int pmid PK
-        string title
-        string abstract
-        date pub_date
-        string doi
-    }
-    AUTHOR {
-        int id PK
-        string name
-        string affiliation
-    }
-    JOURNAL {
-        string issn PK
-        string name
-        float impact_factor
-    }
-    ARTICLE_AUTHOR {
-        int article_id FK
-        int author_id FK
-        int author_order
-    }
-    ARTICLE_CITATION {
-        int citing_article FK
-        int cited_article FK
-    }
-```
+![E-R Diagram](https://raw.githubusercontent.com/csgrace/Database_principle/main/project2/E-R%E5%9B%BE%20v1.drawio.png)
 
 ### Schema Highlights
 
