@@ -47,6 +47,23 @@
       </div>
     </div>
 
+    <!-- PostgreSQL Schema -->
+    <div class="section">
+      <h2 class="section-title">🗄️ PostgreSQL Database Schema</h2>
+      <div class="schema-grid">
+        <div class="schema-card" v-for="table in schema" :key="table.name">
+          <div class="schema-name">{{ table.name }}</div>
+          <div class="schema-purpose">{{ table.purpose }}</div>
+          <ul class="schema-fields">
+            <li v-for="field in table.fields" :key="field.name">
+              <span :class="field.key">{{ field.key === 'pk' ? 'PK' : field.key === 'fk' ? 'FK' : '' }}</span>
+              {{ field.name }} <em>{{ field.type }}</em>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <!-- Tech Stack -->
     <div class="section">
       <h2 class="section-title">Tech Stack</h2>
@@ -76,6 +93,42 @@ import PermissionControl from '@/components/PermissionControl.vue';
 export default {
   name: 'Dashboard',
   components: { PermissionControl },
+  data() {
+    return {
+      schema: [
+        { name: 'articles', purpose: 'Core article data', fields: [
+          { name: 'pmid', type: 'INTEGER', key: 'pk' },
+          { name: 'title', type: 'TEXT', key: '' },
+          { name: 'abstract', type: 'TEXT', key: '' },
+          { name: 'pub_date', type: 'DATE', key: '' },
+          { name: 'doi', type: 'VARCHAR(255)', key: '' },
+          { name: 'journal_issn', type: 'VARCHAR(9)', key: 'fk' }
+        ]},
+        { name: 'authors', purpose: 'Author info', fields: [
+          { name: 'id', type: 'SERIAL', key: 'pk' },
+          { name: 'name', type: 'VARCHAR(255)', key: '' },
+          { name: 'affiliation', type: 'TEXT', key: '' },
+          { name: 'orcid', type: 'VARCHAR(19)', key: '' }
+        ]},
+        { name: 'journals', purpose: 'Journal metadata', fields: [
+          { name: 'issn', type: 'VARCHAR(9)', key: 'pk' },
+          { name: 'name', type: 'VARCHAR(500)', key: '' },
+          { name: 'impact_factor', type: 'NUMERIC', key: '' },
+          { name: 'publisher', type: 'VARCHAR(255)', key: '' }
+        ]},
+        { name: 'article_authors', purpose: 'M2M relationship', fields: [
+          { name: 'article_id', type: 'INTEGER', key: 'pk fk' },
+          { name: 'author_id', type: 'INTEGER', key: 'pk fk' },
+          { name: 'author_order', type: 'SMALLINT', key: '' }
+        ]},
+        { name: 'article_citations', purpose: 'Citation graph', fields: [
+          { name: 'citing_article', type: 'INTEGER', key: 'pk fk' },
+          { name: 'cited_article', type: 'INTEGER', key: 'pk fk' },
+          { name: 'created_at', type: 'TIMESTAMP', key: '' }
+        ]}
+      ]
+    };
+  },
   computed: {
     ...mapGetters(['user', 'userRole']),
     userInitials() {
@@ -264,6 +317,72 @@ export default {
   color: #6b7280;
   padding: 0.2rem 0;
   font-family: 'JetBrains Mono', monospace;
+}
+
+.schema-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.schema-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1rem;
+  border-top: 3px solid #336791;
+}
+
+.schema-name {
+  font-weight: 700;
+  color: #336791;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.schema-purpose {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 0.75rem;
+}
+
+.schema-fields {
+  list-style: none;
+  padding: 0;
+  font-size: 0.78rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.schema-fields li {
+  padding: 0.15rem 0;
+  color: #475569;
+}
+
+.schema-fields li .pk {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  margin-right: 0.3rem;
+}
+
+.schema-fields li .fk {
+  background: #ede9fe;
+  color: #5b21b6;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  margin-right: 0.3rem;
+}
+
+.schema-fields li em {
+  color: #94a3b8;
+  font-style: normal;
+  font-size: 0.7rem;
 }
 
 .tech-list {

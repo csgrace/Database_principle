@@ -7,9 +7,12 @@ import store from '@/store';
 const routes = [
   {
     path: '/',
+    redirect: '/login'
+  },
+  {
+    path: '/dashboard',
     name: 'Dashboard',
-    component: Dashboard,
-    meta: { requiresAuth: false }
+    component: Dashboard
   },
   {
     path: '/login',

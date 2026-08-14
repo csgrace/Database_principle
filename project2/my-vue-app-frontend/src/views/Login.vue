@@ -69,7 +69,7 @@ export default {
           password: this.password,
           role: this.isAdmin ? 'admin' : 'user'
         });
-        this.$router.push('/');
+        this.$router.push('/dashboard');
       } catch (error) {
         this.errorMessage = 'Login failed. Please try again.';
       }
