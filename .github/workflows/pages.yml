@@ -34,13 +34,13 @@ jobs:
 
       - name: Install and Build
         run: |
-          cd "project2/my-vue-app（frontend）"
+          cd "project2/my-vue-app-frontend"
           npm install
           npm run build
 
       - name: Move dist to root
         run: |
-          mv "project2/my-vue-app（frontend）/dist" ./dist
+          mv "project2/my-vue-app-frontend/dist" ./dist
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
