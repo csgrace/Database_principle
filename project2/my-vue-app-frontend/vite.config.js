@@ -22,7 +22,10 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'dist',
+    // GitHub Pages deploys the repository-level docs directory directly.
+    // Build there so the deployed site always matches the current source.
+    outDir: fileURLToPath(new URL('../../docs', import.meta.url)),
+    emptyOutDir: true,
     assetsDir: 'assets'
   }
 })

@@ -322,66 +322,6 @@ export default {
   margin: 0;
 }
 
-.permission-section {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 1.5rem 2rem;
-  margin-bottom: 1.5rem;
-}
-
-.permission-section h2 {
-  font-size: 1.05rem;
-  color: #1e293b;
-  margin-bottom: 0.4rem;
-}
-
-.permission-section p {
-  color: #64748b;
-  font-size: 0.85rem;
-  line-height: 1.5;
-}
-
-.permission-list,
-.admin-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.9rem;
-}
-
-.permission-chip {
-  padding: 0.35rem 0.65rem;
-  border-radius: 999px;
-  background: #e0e7ff;
-  color: #4338ca;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-}
-
-.permission-action {
-  border: 1px solid #667eea;
-  background: white;
-  color: #4f46e5;
-  border-radius: 7px;
-  padding: 0.45rem 0.7rem;
-  cursor: pointer;
-  font-size: 0.8rem;
-}
-
-.permission-action.danger {
-  border-color: #dc2626;
-  color: #b91c1c;
-}
-
-.permission-notice {
-  margin-top: 0.85rem;
-  padding: 0.7rem;
-  background: #fffbeb;
-  border-radius: 7px;
-  color: #92400e !important;
-}
-
 .search-section {
   background: white;
   border-radius: 16px;
